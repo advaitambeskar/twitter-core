@@ -1,0 +1,54 @@
+
+<link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/tweets.css") %>"/>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+
+       <%= form_for @conn, Routes.tweets_path(@conn, :subscribe), [class: "form-inline mt-2 mt-md-0 mr-auto"], fn f -> %>
+         <%= text_input f, :user, value: "", class: "form-control mr-sm-2" %>
+         <%= submit "Subscribe", class: "btn btn-success" %>
+       <% end %>
+
+        <div class="mr-0">
+           <label class="navbar-brand"><%= @username %></label>
+           <%= link "Log Out", to:  Routes.login_path(@conn, :logout), class: "btn btn-danger" %>
+       </div>
+
+    </nav>
+
+
+   <div class="d-md-flex h-md-100 align-items-center mr-2">
+
+       <div class="col-md-4 h-100">
+               <div class="h-100">
+                     <%= form_for @conn, Routes.tweets_path(@conn, :sendTweet), fn f -> %>
+                       <%= textarea f, :tweet, value: "", class: "form-control rounded-5 tweetBox mb-2", rows: 10 %>
+                       <%= submit "Send Tweet",class: "btn btn-primary w-100" %>
+                     <% end %>
+               </div>
+       </div>
+        <div class="col-md-8 p-0 bg-white h-md-100">
+        <h2>Feed</h2>
+        <ul class="list-group">
+            <%= for item <- @tweets do %>
+            <div class="card mb-2 bg-light">
+                <div class="card-body">
+                    <div class="card-title text-capitalize font-weight-bold">
+                        <%= item.owner %>
+                        <%= form_for @conn, Routes.tweets_path(@conn, :retweet), fn f -> %>
+                                <%= hidden_input f, :tweetid, value: item.tweetid %>
+                                <%= submit "Retweet", class: "btn btn-outline-warning float-right" %>
+                        <% end %>
+                    </div>
+                    <div class="card-text">
+                     <%= item.tweet %>
+                    </div>
+
+                </div>
+            </div>
+
+          <% end %>
+
+          </ul>
+        </div>
+
+   </div>

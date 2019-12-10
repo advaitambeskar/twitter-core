@@ -1,0 +1,13 @@
+<div class = "row">
+    <div class = "col-md-12">
+       Hello there, <span id = "user"><%= @conn.params["user"]%></span>
+    </div>
+
+
+     <div class = "col-md-8">
+        <h3>Message: </h3>
+        <ul id = "messageList" class = "list-unstyled">
+        </ul>
+        <input type = "text" id = "new Message" class = "form-control">
+    </div>
+</div>
