@@ -49,7 +49,8 @@ defmodule Project.TweetFacility do
       tweet_list
     end
     IO.inspect "The following tweets have been published for ##{hashtag} in the lifetime"
-    Enum.each(response, fn tweet_id ->
+    reply = []
+    reply = reply ++ Enum.map(response, fn tweet_id ->
       [tweet_string] = from(user in Project.Tweetdata, select: user.tweet, where: user.tweetid==^tweet_id)
       |> Project.Repo.all
       [tweet_owner] = from(user in Project.Tweetdata, select: user.owner, where: user.tweetid==^tweet_id)
@@ -58,12 +59,12 @@ defmodule Project.TweetFacility do
       |> Project.Repo.all
 
       newTweetFormat = "@#{tweet_owner_name} tweeted '#{tweet_string}'"
-      IO.puts newTweetFormat
+      newTweetFormat
     end)
     if(Enum.count(response) != 0) do
-      "These are all the tweets published on ##{hashtag}"
+      {:reply, reply}
     else
-      "There are no tweets published on ##{hashtag} yet"
+      {:error, "There are no tweets published on ##{hashtag} yet"}
     end
   end
 
@@ -91,7 +92,8 @@ defmodule Project.TweetFacility do
     #IO.inspect response
     if(response != []) do
       IO.inspect "The following tweets have been published for @#{user} in the lifetime"
-      Enum.each(response, fn tweet_id ->
+      reply = []
+      reply = reply ++ Enum.map(response, fn tweet_id ->
         [tweet_string] = from(user in Project.Tweetdata, select: user.tweet, where: user.tweetid==^tweet_id)
         |> Project.Repo.all
         [tweet_owner] = from(user in Project.Tweetdata, select: user.owner, where: user.tweetid==^tweet_id)
@@ -100,17 +102,17 @@ defmodule Project.TweetFacility do
         |> Project.Repo.all
 
         newTweetFormat = "@#{tweet_owner_name} tweeted '#{tweet_string}'"
-        IO.puts newTweetFormat
+        newTweetFormat
       end)
       if(Enum.count(response) == 0) do
         IO.puts "\n"
-        "There are no associated tweets by @#{user}"
+        {:error, "There are no associated tweets by @#{user}"}
       else
         IO.puts "\n"
-        "These are all the tweets published on @#{user}"
+        {:reply, reply}
       end
     else
-      "No user associated with #{user}"
+      {:error, "No user associated with #{user}"}
     end
   end
 

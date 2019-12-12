@@ -83,6 +83,36 @@ defmodule Project.ClientFunctions do
     Project.TweetFacility.reTweet(user, tweetid)
   end
 
+  def loadFeed(user) do
+
+  end
+
+  def query(value) do
+    # If value begins with @ then it is a username. If value begins with # it is a hashtag
+    response = nil
+    cond do
+      String.starts_with?(value, "@") ->
+        length = String.length(value)
+        username = String.slice(value, 1..length)
+        {atom, reply} = Project.TweetFacility.userSearchQuery(username)
+        response = if(atom == :reply) do
+          reply
+        else
+          [reply]
+          #what
+        end
+      String.starts_with?(value, "#") ->
+        length = String.length(value)
+        hashtag = String.slice(value, 1..length)
+        {atom, reply} = Project.TweetFacility.hashtagSearchQuery(hashtag)
+        response = if(atom == :reply) do
+          reply
+        else
+          [reply]
+        end
+      end
+      response
+  end
   # mentions and hashtag querying and user querying can occur only if the user is logged in. Login check
   # is needed to be done/ performed
 end

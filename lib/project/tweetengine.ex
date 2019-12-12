@@ -40,23 +40,25 @@ defmodule Project.TweetEngine do
         userID = Project.TweetFacility.getUserIDFromName(username)
         liveUserMap =  Project.LiveUserServer.get_state()
         pid = Map.get(liveUserMap, userID)
-        {id, tweets, followers, feed} = :sys.get_state(pid)
-        if ( Enum.member?(followers, Project.TweetFacility.getUserIDFromName(subscriber)) )do
-          "@#{subscriber} already follows @#{username}"
+        if(pid != nil) do
+          {id, tweets, followers, feed} = :sys.get_state(pid)
+          if ( Enum.member?(followers, Project.TweetFacility.getUserIDFromName(subscriber)) )do
+            "@#{subscriber} already follows @#{username}"
           else
             if(username == subscriber) do
               "You cannot follow your own self."
-              else
+            else
               userID = Project.TweetFacility.getUserIDFromName(username)
               subscriberId = Project.TweetFacility.getUserIDFromName(subscriber)
               liveUserMap =  Project.LiveUserServer.get_state()
-
               userProcessId = Map.get(liveUserMap, userID)
-
               Project.TweetEngine.updateFollower(userProcessId, subscriberId)
               Project.DatabaseFunction.addFollowerToDatabase(subscriber, username)
               "@#{subscriber} has successfully begun following @#{username}"
             end
+          end
+        else
+          "@#{subscriber} does not exist."
         end
       end
     end
