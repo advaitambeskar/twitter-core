@@ -26,6 +26,8 @@
                         'Elixir.ProjectWeb.PageController',
                         'Elixir.ProjectWeb.PageView',
                         'Elixir.ProjectWeb.Presence',
+                        'Elixir.ProjectWeb.QueryController',
+                        'Elixir.ProjectWeb.QueryView',
                         'Elixir.ProjectWeb.Router',
                         'Elixir.ProjectWeb.Router.Helpers',
                         'Elixir.ProjectWeb.TweetsController',

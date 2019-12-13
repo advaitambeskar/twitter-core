@@ -31,7 +31,14 @@ defmodule Project.DatabaseFunction do
     [tweet, hashtag, mention] = Project.TweetFacility.tweetFormat(tweet)
     mentionids = Enum.map(mention, fn x ->
       q = from(user in Project.Userdata, select: user.userid, where: user.username==^x)
-      [answer] = q |> Project.Repo.all
+      ans = q |> Project.Repo.all
+      answer = nil
+      if ans == [] do
+        # something
+        answer = nil
+      else
+        [answer] = ans
+      end
       answer
     end)
 

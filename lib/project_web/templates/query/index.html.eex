@@ -1,0 +1,59 @@
+
+<link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/tweets.css") %>"/>
+
+<div class = "container-fluid">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <%= form_for @conn, Routes.query_path(@conn, :querysubscribe), [class: "form-inline mt-2 mt-md-0 mr-auto"], fn f -> %>
+            <%= text_input f, :user, value: "", class: "form-control mr-sm-2" %>
+            <%= submit "Subscribe", class: "btn btn-success" %>
+        <% end %>
+        
+        <%= form_for @conn, Routes.query_path(@conn, :searchValue), [class: "form-inline mt-2 mt-md-0 mr-auto"], fn f -> %>
+            <%= text_input f, :value, value: "", class: "form-control mr-sm-2" %>
+            <%= submit "Query", class: "btn btn-success" %>
+        <% end %>
+        <div class="mr-0">
+            <label class="navbar-brand"><a class="h4 text-center align-middle text-white" href="/tweets">Home</a></label>
+            <%= link "Log Out", to:  Routes.login_path(@conn, :logout), class: "btn btn-danger" %>
+        </div>
+    </nav>
+      
+    <p class="alert alert-info text-center" role="alert"><%= get_flash(@conn, :reply) %>
+    <%= get_flash(@conn, :error) %></p>
+    <div class="row">
+        <div class = "col-3 bg-white"></div>
+        <div class="col-6 bg-white">
+            <div>
+                <p class="h2">Feed for "<%= @value %>" </p>
+                <br/>
+            </div>
+            <div class ="scrollable">
+                <ul class="list-group">
+                <%= for item <- @tweets do %>
+                    <div class="card mb-2 bg-light">
+                    <div class="card-body">
+                        <div class="card-title text-capitalize font-weight-bold">
+                        <%= item.owner %>
+                            <%= form_for @conn, Routes.tweets_path(@conn, :retweet), fn f -> %>
+                            <%= hidden_input f, :tweetid, value: item.tweetid %>
+                            <%= submit "Retweet", class: "btn btn-outline-warning float-right" %>
+                        <% end %>
+                        </div>
+                        <div class="card-text">
+                        <%= item.tweet %>
+                        </div>
+                    </div>
+                    </div>
+                <% end %>
+                </ul>
+            </div>
+            </div>
+            <div class="w-100"></div>
+            <div class= "col bg-white">
+            <br/>
+            <br/>
+            <br/>
+            </div>
+        <div class = "col-3 bg-white"></div>
+    </div> 
+</div>
