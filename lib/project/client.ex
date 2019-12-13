@@ -72,7 +72,7 @@ defmodule Project.ClientFunctions do
   end
 
   def subscribeToUser(subscriber, username) do
-    IO.puts Project.TweetEngine.subscribe_to_user(subscriber, username)
+    Project.TweetEngine.subscribe_to_user(subscriber, username)
   end
 
   def tweet(user, tweet) do
@@ -84,34 +84,84 @@ defmodule Project.ClientFunctions do
   end
 
   def loadFeed(user) do
-
+    userid = from(user in Project.Userdata, select: user.userid, where: user.username == ^user)
+            |> Project.Repo.all;
+    # IO.inspect user
+    # IO.inspect userid
+    if(userid == []) do
+      {:error, ["User does not exist!"]}
+    else
+      [id] = userid
+      feed_raw = from(user in Project.Feed, select: user.tweets, where: user.userid == ^id)
+                |> Project.Repo.all;
+      if(feed_raw != []) do
+        [feed] = feed_raw
+        tweet = Enum.map(feed, fn x ->
+          [tweet_string] = from(user in Project.Tweetdata, select: user.tweet, where: user.tweetid == ^x)
+                        |> Project.Repo.all
+           tweet_string
+        end)
+        {:reply, tweet}
+      else
+        {:error, ["User has no tweets at this time"]}
+      end
+    end
   end
 
   def query(value) do
     # If value begins with @ then it is a username. If value begins with # it is a hashtag
     response = nil
-    cond do
+    response = cond do
       String.starts_with?(value, "@") ->
         length = String.length(value)
         username = String.slice(value, 1..length)
         {atom, reply} = Project.TweetFacility.userSearchQuery(username)
         response = if(atom == :reply) do
-          reply
+          {:reply, reply}
         else
-          [reply]
+          {:error, [reply]}
           #what
         end
       String.starts_with?(value, "#") ->
         length = String.length(value)
         hashtag = String.slice(value, 1..length)
         {atom, reply} = Project.TweetFacility.hashtagSearchQuery(hashtag)
+        IO.inspect {atom, reply}
         response = if(atom == :reply) do
-          reply
+          {:reply, reply}
         else
-          [reply]
+          {:error, [reply]}
         end
+        true -> response = {:error, ["Please enter username starting with '@' and hashtag starting with '#'"]}
       end
       response
+  end
+
+  def getHashTagTweets(hashtag) do
+    tweets = from(user in Project.Topic, select: user.tweet, where: user.hashtags == ^hashtag)
+            |> Project.Repo.all
+
+    response =
+    if(tweets == []) do
+      %{}
+    else
+      [tweetids] = tweets
+      Enum.map(tweetids, fn x ->
+        owner = from(user in Project.Tweetdata, select: user.owner, where: user.tweetid==^x)
+        |> Project.Repo.all
+        [owner_name] = from(user in Project.Userdata, select: user.username, where: [user.userid]==^owner)
+        |> Project.Repo.all
+        [tweet] = from(user in Project.Tweetdata, select: user.tweet, where: user.tweetid==^x)
+        |> Project.Repo.all
+        %{owner: owner_name, tweet: tweet, tweetid: x}
+      end)
+    end
+    IO.inspect response
+    if(response == %{}) do
+      {:error, response}
+    else
+      {:reply, response}
+    end
   end
   # mentions and hashtag querying and user querying can occur only if the user is logged in. Login check
   # is needed to be done/ performed

@@ -112,7 +112,7 @@ defmodule Project.TweetFacility do
         {:reply, reply}
       end
     else
-      {:error, "No user associated with #{user}"}
+      {:error, "No user associated with @#{user}"}
     end
   end
 
@@ -203,7 +203,7 @@ defmodule Project.TweetFacility do
     userIDs = from(user in Project.Userdata, select: user.userid, where: user.username==^userName)
                |> Project.Repo.all
     if length(userIDs) > 0 do
-      [userID|_tail] = userIDs
+      [userID|tail] = userIDs
       userID
     else
       nil
@@ -212,11 +212,16 @@ defmodule Project.TweetFacility do
 
   def updateUserFeed(users, liveUserMap, tweet) do
     Enum.each(users, fn userName ->
-      userID = getUserIDFromName(userName)
+      userID = Project.TweetFacility.getUserIDFromName(userName)
       pid = Map.get(liveUserMap, userID)
       if pid != nil do
         Project.TweetEngine.updateFeed(pid, tweet)
         Project.DatabaseFunction.addToFeed(userID, tweet)
+      else
+        if userID != nil do
+          Project.DatabaseFunction.addToFeed(userID, tweet)
+        end
+
       end
       {:ok}
     end)

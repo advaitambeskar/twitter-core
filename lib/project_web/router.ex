@@ -23,5 +23,9 @@ defmodule ProjectWeb.Router do
     post "/tweets/subscribe", TweetsController, :subscribe
     post "/tweets/send", TweetsController, :sendTweet
     post "/tweets/retweet", TweetsController, :retweet
+    post "/query", TweetsController, :tweetQuery
+    get "/query", QueryController, :queryPage
+    post "/query/query", QueryController, :searchValue
+    post "/query/subscribe", QueryController, :querysubscribe
   end
 end
