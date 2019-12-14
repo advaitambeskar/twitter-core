@@ -1,4 +1,33 @@
-# Project
+# Project 4.2 - Twitter Implementation with Phoenix Framework
+
+# Group
+  * Advait Ambeskar (9615-9178)
+  * Meenakshi Shendye (0166-1233)
+
+# Features
+
+## Implemented on the front-end as well as the back-end
+
+  * Register User
+  * Login User
+  * Logout User
+  * Delete User
+  * Tweet
+  * Retweet
+  * Subscribe to User
+  * Search for User
+  * Search for Hashtag
+  * Live Feed Update
+  * Multiple Login
+
+## Implemented on the back-end only
+
+  * Subscribe to Hashtag
+
+# Video Link (YouTube)
+  
+  * Link - https://youtu.be/eESj3qJUPdI
+# Implementation
 
 To start your Phoenix server:
 
@@ -10,11 +39,3 @@ To start your Phoenix server:
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: http://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix

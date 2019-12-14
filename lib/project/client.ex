@@ -2,16 +2,56 @@ defmodule Project.Client do
   import Ecto.Query
 
   def main() do
-    Project.ClientFunctions.register("msa", "msa")
-    Project.ClientFunctions.logout("msa")
-    Project.ClientFunctions.login("msa", "msa")
-    Project.ClientFunctions.logout("msa")
-    Project.ClientFunctions.delete("msa", "msa")
-    Project.ClientFunctions.logout("msa")
-    Project.ClientFunctions.login("advaitambeskar", "advait")
-    Project.ClientFunctions.login("msa", "msa")
-    Project.ClientFunctions.delete("msa", "msa")
+    Project.Client.registerBlock()
+    #Project.Client.subscriberBlock()
+    Enum.each(1..100, fn x ->
+      Project.Client.sendTweet()
+    end)
+    Project.ClientFunctions.tweet("advaitambeskar", "HELLLLOOOOOO!! #hey #dog")
     :end
+  end
+
+  def registerBlock() do
+    user = "user"
+    password = "pwd"
+    noOfUsers = 1..100
+    IO.inspect noOfUsers
+    for x <- noOfUsers do
+      IO.inspect user <> Integer.to_string(x)
+      Project.ClientFunctions.register(user<>Integer.to_string(x), password)
+    end
+  end
+
+  def subscriberBlock() do
+    numberOfMessage = 1..125
+    [allExistingUser] = from(user in Project.Userdata, select: user.username) |> Project.Repo.all
+    Enum.each(numberOfMessage, fn x ->
+      firstUser = Enum.random(allExistingUser)
+      secondUser = Enum.random(allExistingUser)
+      Project.ClientFunctions.subscribeToUser(firstUser, secondUser)
+    end)
+  end
+
+  def sendTweet() do
+    firstword =
+    ["I", "love", "eating", "toasted", "cheese", "and", "tuna", "sandwiches", "the", "body", "may", "perhaps", "compensates", "for", "the", "loss"]
+    secondword =
+    ["sixty", "four", "comes", "asking", "for", "bread"]
+    thirdword =
+    ["he","turned","in", "the", "research", "paper", "on", "friday"]
+    hashtag =
+    [ "#dog", "#dogsofinstagram", "#dogs", "#dogstagram", "#doglover", "#dogoftheday", "#doglife", "#doglovers",
+      "#doggy", "#dogsofinsta", "#dogsofig", "#doggo", "#doglove", "#dogsitting", "#dogslife",
+      "#dogsofinstaworld", "#doggie", "#dogscorner"]
+    tweet = Enum.random(firstword)<>" "<>Enum.random(secondword)<>" "<>Enum.random(thirdword)<>" "
+    tweet = tweet<>Enum.random(firstword)<>" "<>Enum.random(secondword)<>" "<>Enum.random(thirdword)<>" "<>Enum.random(hashtag)
+    # IO.inspect tweet
+    allExistingUser = from(user in Project.Userdata, select: user.username) |> Project.Repo.all
+
+    firstUser = Enum.random(allExistingUser)
+    secondUser = "@" <> Enum.random(allExistingUser)
+    tweet = tweet <> " " <> secondUser
+    Project.ClientFunctions.tweet(firstUser, tweet)
   end
 end
 

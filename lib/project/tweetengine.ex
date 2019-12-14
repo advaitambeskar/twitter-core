@@ -31,7 +31,7 @@ defmodule Project.TweetEngine do
 # User cannot follow self
 # User cannot re subscribe someone
   def subscribe_to_user(subscriber, username) do
-    if (Project.LoginEngine.isUserNameValid(username) == false or username == nil or username == "") do
+    response = if (Project.LoginEngine.isUserNameValid(username) == false or username == nil or username == "") do
         "The user @#{username} you are trying to follow does not exist."
     else
       if (Project.LoginEngine.isUserNameValid(subscriber) == false or Project.LoginEngine.isLogin?(subscriber) == false or username == nil or username == "") do
@@ -42,7 +42,7 @@ defmodule Project.TweetEngine do
         pid = Map.get(liveUserMap, userID)
         if(pid != nil) do
           {id, tweets, followers, feed} = :sys.get_state(pid)
-          if ( Enum.member?(followers, Project.TweetFacility.getUserIDFromName(subscriber)) )do
+          if (Enum.member?(followers, Project.TweetFacility.getUserIDFromName(subscriber)) )do
             "@#{subscriber} already follows @#{username}"
           else
             if(username == subscriber) do
@@ -58,10 +58,13 @@ defmodule Project.TweetEngine do
             end
           end
         else
-          "@#{subscriber} does not exist."
+          #Project.TweetEngine.updateFollower(userProcessId, subscriberId)
+          Project.DatabaseFunction.addFollowerToDatabase(subscriber, username)
+          "@#{subscriber} has successfully begun following @#{username}"
         end
       end
     end
+    response
   end
 
   def addTweet(pid, tweet) do
