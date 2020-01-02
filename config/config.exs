@@ -12,7 +12,7 @@ config :project, Project.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  port: 5433
+  port: 5432
 
 config :project,
   ecto_repos: [Project.Repo]
